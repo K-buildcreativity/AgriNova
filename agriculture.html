@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="AgriNova is a precision agriculture platform for growers, greenhouse operators, and agribusiness teams.">
+  <meta name="theme-color" content="#1f6a4c">
+  <title>AgriNova | Agriculture Operations Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root{
+      --bg:#f5efe5;
+      --surface:rgba(255,255,255,.9);
+      --surface-strong:#fff;
+      --text:#132119;
+      --muted:#617068;
+      --line:rgba(19,33,25,.12);
+      --primary:#1f6a4c;
+      --primary-dark:#174836;
+      --accent:#d39a44;
+      --shadow:0 24px 60px rgba(19,33,25,.10);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Manrope',sans-serif;
+      color:var(--text);
+      line-height:1.55;
+      min-height:100vh;
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at top left,rgba(31,106,76,.14),transparent 28%),
+        radial-gradient(circle at top right,rgba(211,154,68,.14),transparent 24%),
+        linear-gradient(180deg,#f6f1e9 0%,#efe7db 100%);
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:radial-gradient(rgba(19,33,25,.06) 1px,transparent 1px);
+      background-size:24px 24px;
+      opacity:.3;
+    }
+    a{color:inherit}
+    img{display:block;max-width:100%}
+    .container{width:min(1180px,calc(100% - 2rem));margin:0 auto;position:relative;z-index:1}
+    .header{
+      position:sticky;top:0;z-index:120;
+      backdrop-filter:blur(18px);
+      background:rgba(246,241,233,.78);
+      border-bottom:1px solid rgba(19,33,25,.08);
+    }
+    .navbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0}
+    .brand{display:inline-flex;align-items:center;gap:.8rem;text-decoration:none}
+    .brand-mark{
+      width:46px;height:46px;border-radius:16px;display:grid;place-items:center;color:#fff;
+      background:linear-gradient(135deg,var(--primary),#2d8b62);
+      box-shadow:0 18px 30px rgba(31,106,76,.28);
+      flex:none;
+    }
+    .brand-text{display:flex;flex-direction:column;line-height:1.05}
+    .brand-text strong,.hero h1,.section h2,.panel h3,.timeline h3{font-family:'Sora',sans-serif;letter-spacing:-.03em}
+    .brand-text strong{font-size:1.05rem}
+    .brand-text span{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+    .nav-links{list-style:none;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+    .nav-links a{
+      position:relative;text-decoration:none;font-weight:800;color:var(--muted);
+      padding:.2rem 0;transition:color .2s;
+    }
+    .nav-links a::after{
+      content:"";position:absolute;left:0;bottom:-.28rem;width:100%;height:2px;border-radius:999px;
+      background:linear-gradient(90deg,var(--primary),var(--accent));
+      transform:scaleX(0);transform-origin:left;transition:transform .2s;
+    }
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+    .header-actions{display:flex;align-items:center;gap:.75rem}
+    .pill{
+      display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+      padding:.8rem 1.02rem;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.72);color:var(--text);text-decoration:none;
+      font-weight:800;font-size:.94rem;box-shadow:0 12px 30px rgba(19,33,25,.05);
+      transition:transform .2s,box-shadow .2s,background .2s;cursor:pointer;font:inherit;
+    }
+    .pill:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(19,33,25,.1)}
+    .primary-btn{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--primary),#2c7d5a)}
+    .primary-btn:hover{background:linear-gradient(135deg,var(--primary-dark),#256b4f)}
+    .menu-btn{
+      display:none;align-items:center;justify-content:center;width:48px;height:48px;border-radius:16px;
+      border:1px solid var(--line);background:rgba(255,255,255,.76);color:var(--text);
+      cursor:pointer;font:inherit;box-shadow:0 12px 30px rgba(19,33,25,.05);
+    }
+    .backdrop{
+      position:fixed;inset:0;background:rgba(8,16,12,.45);opacity:0;pointer-events:none;
+      transition:opacity .25s;z-index:180;
+    }
+    .backdrop.open{opacity:1;pointer-events:auto}
+    .drawer{
+      position:fixed;top:0;right:0;width:min(88vw,340px);height:100vh;padding:1.1rem;
+      display:flex;flex-direction:column;gap:1rem;background:rgba(255,255,255,.95);
+      backdrop-filter:blur(18px);box-shadow:-24px 0 60px rgba(19,33,25,.16);
+      transform:translateX(100%);transition:transform .28s;z-index:190;
+    }
+    .drawer.open{transform:translateX(0)}
+    .drawer-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:.9rem;border-bottom:1px solid var(--line)}
+    .drawer-links{display:grid;gap:.25rem}
+    .drawer-links a{display:block;text-decoration:none;padding:1rem 0;border-bottom:1px solid var(--line);font-weight:800;color:var(--text)}
+    .drawer-actions{margin-top:auto;display:grid;gap:.75rem}
+    .hero{padding:4.6rem 0 2.3rem}
+    .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center}
+    .badge{
+      display:inline-flex;align-items:center;gap:.5rem;padding:.56rem .88rem;border-radius:999px;
+      background:rgba(31,106,76,.1);color:var(--primary);font-size:.78rem;font-weight:900;
+      letter-spacing:.12em;text-transform:uppercase;
+    }
+    .hero h1{font-size:clamp(2.8rem,6vw,5rem);line-height:1.02;margin:1rem 0 .95rem;max-width:11ch}
+    .lead{font-size:1.12rem;color:var(--muted);max-width:58ch}
+    .actions{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.5rem 0 1.4rem}
+    .chips{display:flex;flex-wrap:wrap;gap:.7rem}
+    .chips span{
+      display:inline-flex;align-items:center;gap:.5rem;padding:.7rem .92rem;border-radius:999px;
+      background:rgba(255,255,255,.78);border:1px solid var(--line);box-shadow:0 14px 28px rgba(19,33,25,.05);
+      font-size:.92rem;font-weight:800;
+    }
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(246,242,234,.95));
+      border:1px solid rgba(19,33,25,.09);border-radius:36px;box-shadow:var(--shadow);padding:1.2rem;
+      overflow:hidden;position:relative;
+    }
+    .panel::before{
+      content:"";position:absolute;inset:auto -20% -30% auto;width:280px;height:280px;border-radius:50%;
+      background:radial-gradient(circle,rgba(31,106,76,.16),transparent 68%);
+    }
+    .panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+    .panel-head strong{display:block;font-family:'Sora',sans-serif;font-size:2rem;letter-spacing:-.04em}
+    .panel-head span{font-size:.8rem;color:var(--muted);font-weight:700}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin:1rem 0}
+    .stat{background:#fff;border:1px solid var(--line);border-radius:22px;padding:.95rem;box-shadow:0 10px 22px rgba(19,33,25,.04)}
+    .stat strong{display:block;font-family:'Sora',sans-serif;font-size:1.55rem;margin-bottom:.1rem}
+    .stat span{color:var(--muted);font-size:.88rem}
+    .panel-list{list-style:none;display:grid;gap:.8rem;margin-top:.6rem}
+    .panel-list li{display:flex;gap:.7rem;align-items:flex-start}
+    .panel-list i{color:var(--primary);margin-top:.18rem;flex:none}
+    .trust{margin-top:.8rem;padding:1.2rem 0 0}
+    .trust-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.9rem}
+    .trust-card{
+      background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:24px;padding:1rem;
+      box-shadow:0 12px 28px rgba(19,33,25,.04);
+    }
+    .trust-card i{color:var(--primary);font-size:1.1rem;margin-bottom:.7rem}
+    .trust-card strong{display:block;font-family:'Sora',sans-serif;font-size:1.05rem;margin-bottom:.35rem}
+    .trust-card p{color:var(--muted);font-size:.92rem}
+    .section{padding:4rem 0}
+    .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:1.4rem}
+    .section h2{font-size:clamp(1.85rem,3vw,2.9rem);margin:.85rem 0 0}
+    .section-head p{max-width:56ch;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+    .card{
+      background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:28px;padding:1.28rem;
+      box-shadow:0 16px 34px rgba(19,33,25,.06);transition:transform .22s,border-color .22s,box-shadow .22s;
+    }
+    .card:hover{transform:translateY(-6px);border-color:rgba(31,106,76,.22);box-shadow:0 24px 50px rgba(19,33,25,.1)}
+    .icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;margin-bottom:1rem;color:var(--primary);background:rgba(31,106,76,.1);font-size:1.2rem}
+    .card h3{font-family:'Sora',sans-serif;font-size:1.15rem;letter-spacing:-.02em;margin-bottom:.5rem}
+    .card p{color:var(--muted)}
+    .split{display:grid;grid-template-columns:1.05fr .95fr;gap:1.15rem;align-items:stretch}
+    .split-panel{
+      background:linear-gradient(135deg,#173c2d,#0f241c);color:#fff;border-radius:36px;padding:1.5rem;
+      box-shadow:var(--shadow);position:relative;overflow:hidden;
+    }
+    .split-panel::before{
+      content:"";position:absolute;inset:auto -16% -25% auto;width:290px;height:290px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,217,139,.18),transparent 70%);
+    }
+    .split-panel p{color:rgba(255,255,255,.78);max-width:58ch}
+    .list{list-style:none;display:grid;gap:.8rem;margin-top:1.15rem}
+    .list li{display:flex;gap:.75rem;align-items:flex-start;color:rgba(255,255,255,.92)}
+    .list i{color:#f4d18a;margin-top:.18rem;flex:none}
+    .side{display:grid;gap:1rem}
+    .metric{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:28px;padding:1.2rem;box-shadow:0 16px 34px rgba(19,33,25,.06)}
+    .metric .label{display:inline-flex;align-items:center;gap:.45rem;color:var(--primary);font-size:.76rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem}
+    .metric strong{display:block;font-family:'Sora',sans-serif;font-size:1.45rem;letter-spacing:-.03em;margin-bottom:.45rem}
+    .metric p{color:var(--muted)}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.85rem}
+    .tag{display:inline-flex;align-items:center;justify-content:center;padding:.46rem .7rem;border-radius:999px;background:rgba(31,106,76,.08);color:var(--primary);border:1px solid rgba(31,106,76,.12);font-size:.83rem;font-weight:800}
+    .image-card{border-radius:28px;overflow:hidden;position:relative;min-height:250px;box-shadow:var(--shadow)}
+    .image-card img{width:100%;height:100%;object-fit:cover}
+    .overlay{
+      position:absolute;left:1rem;right:1rem;bottom:1rem;padding:1rem;border-radius:20px;color:#fff;
+      border:1px solid rgba(255,255,255,.14);background:rgba(10,18,14,.56);backdrop-filter:blur(10px)
+    }
+    .overlay strong{display:block;font-family:'Sora',sans-serif;font-size:1.05rem;margin-bottom:.2rem}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .65s,transform .65s}
+    .reveal.in-view{opacity:1;transform:translateY(0)}
+    section[id]{scroll-margin-top:110px}
+    .timeline-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .contact-split{grid-template-columns:.9fr 1.1fr;align-items:start}
+    .cta-inner{grid-template-columns:1.05fr .95fr;align-items:center}
+    @media (max-width:1080px){
+      .hero-grid,.split{grid-template-columns:1fr}
+      .timeline-grid,.contact-split,.cta-inner{grid-template-columns:1fr}
+      .section-head{flex-direction:column;align-items:flex-start}
+    }
+    @media (max-width:900px){
+      .trust-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:820px){
+      .nav-links,.header-actions{display:none}
+      .menu-btn{display:inline-flex}
+      .form-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:560px){
+      .container{width:min(100% - 1.2rem,1180px)}
+      .hero{padding-top:3.2rem}
+      .hero h1{max-width:100%}
+      .trust-row{grid-template-columns:1fr}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      .reveal{opacity:1;transform:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" id="backdrop"></div>
+  <nav class="drawer" id="drawer" aria-label="Mobile navigation">
+    <div class="drawer-head">
+      <a class="brand" href="#home">
+        <div class="brand-mark"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+        <div class="brand-text"><strong>AgriNova</strong><span>Agriculture platform</span></div>
+      </a>
+      <button class="menu-btn" type="button" id="closeMenu" aria-label="Close menu"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+    </div>
+    <div class="drawer-links">
+      <a href="#home">Home</a>
+      <a href="#platform">Platform</a>
+      <a href="#operations">Operations</a>
+      <a href="#sustainability">Sustainability</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="drawer-actions">
+      <a class="pill primary-btn" href="#contact"><i class="fas fa-calendar-check" aria-hidden="true"></i> Request demo</a>
+      <a class="pill" href="#platform"><i class="fas fa-layer-group" aria-hidden="true"></i> View capabilities</a>
+    </div>
+  </nav>
+  <header class="header">
+    <div class="container navbar">
+      <a class="brand" href="#home" aria-label="AgriNova home">
+        <div class="brand-mark"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+        <div class="brand-text"><strong>AgriNova</strong><span>Agriculture platform</span></div>
+      </a>
+      <ul class="nav-links" aria-label="Primary">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#platform">Platform</a></li>
+        <li><a href="#operations">Operations</a></li>
+        <li><a href="#sustainability">Sustainability</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="header-actions">
+        <a class="pill" href="#platform"><i class="fas fa-chart-column" aria-hidden="true"></i> See platform</a>
+        <a class="pill primary-btn" href="#contact"><i class="fas fa-calendar-check" aria-hidden="true"></i> Request demo</a>
+      </div>
+      <button class="menu-btn" type="button" id="openMenu" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i class="fas fa-bars" aria-hidden="true"></i></button>
+    </div>
+  </header>
+  <main>
+    <section id="home" class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <span class="badge"><i class="fas fa-satellite-dish" aria-hidden="true"></i> Precision agriculture platform</span>
+          <h1>Operate modern farms with clearer data, faster decisions, and reliable execution.</h1>
+          <p class="lead">AgriNova helps growers, greenhouse operators, and agribusiness teams monitor soil, automate irrigation, and coordinate decisions from one dependable workflow.</p>
+          <div class="actions">
+            <a class="pill primary-btn" href="#contact"><i class="fas fa-calendar-check" aria-hidden="true"></i> Schedule a consultation</a>
+            <a class="pill" href="#platform"><i class="fas fa-layer-group" aria-hidden="true"></i> Explore platform</a>
+          </div>
+          <div class="chips">
+            <span><i class="fas fa-microchip" aria-hidden="true"></i> Live field data</span>
+            <span><i class="fas fa-droplet" aria-hidden="true"></i> Irrigation automation</span>
+            <span><i class="fas fa-people-group" aria-hidden="true"></i> Team collaboration</span>
+            <span><i class="fas fa-file-lines" aria-hidden="true"></i> Audit-ready records</span>
+          </div>
+        </div>
+        <div class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <span class="badge" style="background:rgba(31,106,76,.08)">Operations snapshot</span>
+              <h3 style="margin-top:.9rem">What your team needs before the next irrigation run.</h3>
+            </div>
+            <div style="text-align:right"><strong>Live</strong><span>sync status</span></div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat"><strong>Soil</strong><span>Moisture, EC, and temperature trends</span></div>
+            <div class="stat"><strong>Water</strong><span>Scheduled irrigation by block</span></div>
+            <div class="stat"><strong>Weather</strong><span>Forecast-aware recommendations</span></div>
+            <div class="stat"><strong>Logs</strong><span>Exportable activity history</span></div>
+          </div>
+          <ul class="panel-list">
+            <li><i class="fas fa-check" aria-hidden="true"></i><span>Weather-aware irrigation windows.</span></li>
+            <li><i class="fas fa-check" aria-hidden="true"></i><span>Task notes and site updates in one view.</span></li>
+            <li><i class="fas fa-check" aria-hidden="true"></i><span>Reports that are simple to share with leadership.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container trust reveal">
+        <div class="trust-row">
+          <div class="trust-card"><i class="fas fa-eye" aria-hidden="true"></i><strong>Field visibility</strong><p>See sensor, climate, and crop data in one place.</p></div>
+          <div class="trust-card"><i class="fas fa-sliders" aria-hidden="true"></i><strong>Automation</strong><p>Trigger irrigation and alerts from configurable rules.</p></div>
+          <div class="trust-card"><i class="fas fa-people-group" aria-hidden="true"></i><strong>Collaboration</strong><p>Keep growers, managers, and consultants aligned.</p></div>
+          <div class="trust-card"><i class="fas fa-shield-halved" aria-hidden="true"></i><strong>Reporting</strong><p>Export clean records for audits and board reviews.</p></div>
+        </div>
+      </div>
+    </section>
+    <section id="platform" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="badge">Core capabilities</span>
+            <h2>One platform for visibility, planning, and reporting.</h2>
+          </div>
+          <p>Keep field data, irrigation decisions, and team updates in one place across farms, greenhouses, and multi-site operations.</p>
+        </div>
+        <div class="grid">
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-microchip" aria-hidden="true"></i></div>
+            <h3>Soil intelligence</h3>
+            <p>Combine readings, scouting notes, and crop stage data before small issues spread.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-droplet" aria-hidden="true"></i></div>
+            <h3>Precision irrigation</h3>
+            <p>Schedule by block, crop stage, and weather to reduce manual guesswork.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-seedling" aria-hidden="true"></i></div>
+            <h3>Crop planning</h3>
+            <p>Align tasks, inputs, and harvest windows with a shared operating plan.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-clipboard-list" aria-hidden="true"></i></div>
+            <h3>Traceability</h3>
+            <p>Keep an activity record for inputs, treatments, and field changes.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-people-group" aria-hidden="true"></i></div>
+            <h3>Team coordination</h3>
+            <p>Use shared workflows so managers, agronomists, and operators stay in sync.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-chart-column" aria-hidden="true"></i></div>
+            <h3>Reporting</h3>
+            <p>Export summaries for leadership, compliance, and board-level review.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="operations" class="section">
+      <div class="container">
+        <div class="split">
+          <article class="split-panel reveal">
+            <span class="badge" style="background:rgba(255,255,255,.12);color:#f7ddb0">From data to action</span>
+            <h2 style="margin-top:.85rem">Turn sensor feeds and field notes into a repeatable workflow.</h2>
+            <p style="margin-top:.8rem">AgriNova helps teams see conditions, prioritize blocks, and execute with fewer handoffs.</p>
+            <ul class="list">
+              <li><i class="fas fa-check" aria-hidden="true"></i><span>Real-time sensor readings grouped by block and crop zone.</span></li>
+              <li><i class="fas fa-check" aria-hidden="true"></i><span>Weather-aware irrigation windows that help reduce waste.</span></li>
+              <li><i class="fas fa-check" aria-hidden="true"></i><span>Task assignments and notes that stay with each site.</span></li>
+              <li><i class="fas fa-check" aria-hidden="true"></i><span>Reports that are simple to share with leadership.</span></li>
+            </ul>
+          </article>
+          <div class="side">
+            <article class="metric reveal">
+              <div class="label"><i class="fas fa-network-wired" aria-hidden="true"></i> Deployment model</div>
+              <strong>Start with one site, then scale across the network.</strong>
+              <p>Use the same workflow for pilot greenhouses, commercial fields, orchards, or cooperative programs.</p>
+              <div class="tags">
+                <span class="tag">Pilot ready</span>
+                <span class="tag">Phase rollout</span>
+                <span class="tag">Multi-site</span>
+              </div>
+            </article>
+            <div class="image-card reveal">
+              <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=2070&auto=format&fit=crop" alt="Connected greenhouse operation" loading="lazy" decoding="async">
+              <div class="overlay">
+                <strong>Built for modern growing teams</strong>
+                <span>Greenhouses, open-field farms, orchards, and cooperative networks.</span>
+              </div>
+            </div>
+            <article class="metric reveal">
+              <div class="label"><i class="fas fa-user-shield" aria-hidden="true"></i> Typical users</div>
+              <strong>Growers, agronomists, operations leads, and site managers.</strong>
+              <p>Everyone sees the same status, the same priorities, and the same historical record.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sustainability" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="badge">Sustainability and governance</span>
+            <h2>Operational discipline that supports long-term soil health.</h2>
+          </div>
+          <p>Technology should make farming more precise, not more complicated. This section keeps resource use, reporting, and team routines aligned.</p>
+        </div>
+        <div class="timeline-grid">
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-search" aria-hidden="true"></i></div>
+            <h3>Assess</h3>
+            <p>Review field conditions, water use, and current workflows before rollout.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-rocket" aria-hidden="true"></i></div>
+            <h3>Deploy</h3>
+            <p>Connect the sensors, schedules, and team workflow that matter most.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+            <h3>Optimize</h3>
+            <p>Use the historical record to refine timing, coordination, and planning.</p>
+          </article>
+        </div>
+        <div class="grid" style="margin-top:1rem;">
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-droplet" aria-hidden="true"></i></div>
+            <h3>Resource efficiency</h3>
+            <p>Water and input schedules can be tied to actual field conditions instead of static assumptions.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+            <h3>Soil stewardship</h3>
+            <p>Track rotations, compost plans, and crop treatments alongside the rest of your operational data.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon"><i class="fas fa-shield-halved" aria-hidden="true"></i></div>
+            <h3>Governance and traceability</h3>
+            <p>Keep records organized for consultants, auditors, investors, and internal management reviews.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="panel reveal" style="background:linear-gradient(135deg,#173c2d,#215b43 52%,#0f241c);color:#fff;padding:2rem;border-radius:36px;">
+          <div class="split cta-inner">
+            <div>
+              <span class="badge" style="background:rgba(255,255,255,.12);color:#f7ddb0">Next step</span>
+              <h2 style="margin-top:.85rem">Bring discipline to irrigation, crop reporting, and team coordination.</h2>
+              <p style="margin-top:.8rem;color:rgba(255,255,255,.78);max-width:58ch;">We can help map your operation, identify automation opportunities, and outline a phased deployment plan that fits your farm or greenhouse.</p>
+              <div class="actions" style="margin-bottom:0;">
+                <a class="pill primary-btn" href="#contact"><i class="fas fa-calendar-check" aria-hidden="true"></i> Book a consultation</a>
+                <a class="pill" href="#home"><i class="fas fa-arrow-up" aria-hidden="true"></i> Review overview</a>
+              </div>
+            </div>
+            <div class="card" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff;">
+              <div class="icon" style="background:rgba(255,255,255,.12);color:#f7ddb0;"><i class="fas fa-list-check" aria-hidden="true"></i></div>
+              <h3 style="color:#fff">Typical engagement</h3>
+              <p style="color:rgba(255,255,255,.78)">Discovery, pilot, then scale once the workflow is validated.</p>
+              <div class="tags">
+                <span class="tag" style="background:rgba(255,255,255,.08);color:#f7ddb0;border-color:rgba(255,255,255,.12);">Discovery</span>
+                <span class="tag" style="background:rgba(255,255,255,.08);color:#f7ddb0;border-color:rgba(255,255,255,.12);">Pilot</span>
+                <span class="tag" style="background:rgba(255,255,255,.08);color:#f7ddb0;border-color:rgba(255,255,255,.12);">Scale</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="badge">Contact</span>
+            <h2>Talk with an agritech specialist about your operation.</h2>
+          </div>
+          <p>Share your site size, crop mix, and rollout timeline. We will reply with a practical next step.</p>
+        </div>
+        <div class="split contact-split">
+          <aside class="card reveal" style="padding:1.35rem;">
+            <h3 style="font-family:'Sora',sans-serif;font-size:1.3rem;margin-bottom:.7rem;letter-spacing:-.03em;">Best fit for</h3>
+            <p style="color:var(--muted)">Teams that need a cleaner way to manage irrigation, reporting, and crop operations across one or more sites.</p>
+            <div style="display:grid;gap:.85rem;margin-top:1rem;">
+              <div class="trust-card" style="background:rgba(31,106,76,.06);box-shadow:none;"><i class="fas fa-check-circle" aria-hidden="true"></i><strong>Operations coverage</strong><p>Greenhouses, open-field farms, orchards, and cooperative networks.</p></div>
+              <div class="trust-card" style="background:rgba(31,106,76,.06);box-shadow:none;"><i class="fas fa-clock" aria-hidden="true"></i><strong>Response window</strong><p>We usually reply within one business day with a tailored consultation outline.</p></div>
+              <div class="trust-card" style="background:rgba(31,106,76,.06);box-shadow:none;"><i class="fas fa-diagram-project" aria-hidden="true"></i><strong>Engagement model</strong><p>Discovery, pilot, then scale once the workflow is validated.</p></div>
+            </div>
+          </aside>
+          <form class="card reveal" id="demoForm" style="padding:1.35rem;">
+            <h3 style="font-family:'Sora',sans-serif;font-size:1.3rem;margin-bottom:.7rem;letter-spacing:-.03em;">Request a consultation</h3>
+              <div class="form-grid">
+              <div class="field"><label for="name">Full name</label><input type="text" id="name" name="name" placeholder="Jane Smith" required></div>
+              <div class="field"><label for="email">Work email</label><input type="email" id="email" name="email" placeholder="jane@company.com" required></div>
+              <div class="field"><label for="company">Organization</label><input type="text" id="company" name="company" placeholder="AgriCo Farms" required></div>
+              <div class="field"><label for="farmType">Operation type</label><select id="farmType" name="farmType" required><option value="" selected disabled>Select one</option><option value="greenhouse">Greenhouse</option><option value="open-field">Open-field farm</option><option value="orchard">Orchard</option><option value="mixed">Mixed operation</option><option value="cooperative">Cooperative</option><option value="consultancy">Consultancy</option></select></div>
+            </div>
+            <div class="field"><label for="message">Project notes</label><textarea id="message" name="message" rows="5" placeholder="Tell us about your site, current workflow, and what you want to improve."></textarea></div>
+            <div class="actions">
+              <button type="submit" class="pill primary-btn" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane" aria-hidden="true"></i> Request demo</button>
+            </div>
+            <p style="margin-top:.7rem;color:var(--muted);font-size:.92rem;">No pressure. We will respond with a practical recommendation.</p>
+            <p class="feedback" id="formFeedback" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer style="padding:2rem 0 2.5rem;color:var(--muted);">
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-top:1.1rem;border-top:1px solid var(--line);flex-wrap:wrap;">
+      <div style="max-width:56ch;">
+        <a class="brand" href="#home" style="margin-bottom:.65rem;">
+          <div class="brand-mark"><i class="fas fa-leaf" aria-hidden="true"></i></div>
+          <div class="brand-text"><strong>AgriNova</strong><span>Agriculture platform</span></div>
+        </a>
+        <p>Built for agriculture teams that value clarity, execution, and reliable operational data.</p>
+        <p style="margin-top:.45rem;font-size:.9rem;">&copy; <span id="year"></span> AgriNova. All rights reserved.</p>
+      </div>
+      <div style="display:flex;gap:.65rem;flex-wrap:wrap;" aria-label="Social links">
+        <a href="#" aria-label="Twitter" class="pill" style="width:40px;height:40px;padding:0;border-radius:12px;"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+        <a href="#" aria-label="LinkedIn" class="pill" style="width:40px;height:40px;padding:0;border-radius:12px;"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+        <a href="#" aria-label="Instagram" class="pill" style="width:40px;height:40px;padding:0;border-radius:12px;"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="#" aria-label="YouTube" class="pill" style="width:40px;height:40px;padding:0;border-radius:12px;"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const drawer=document.getElementById('drawer'),backdrop=document.getElementById('backdrop'),openMenu=document.getElementById('openMenu'),closeMenu=document.getElementById('closeMenu'),navItems=document.querySelectorAll('.nav-links a,.drawer-links a'),sections=[...document.querySelectorAll('section[id]')],revealItems=document.querySelectorAll('.reveal'),form=document.getElementById('demoForm'),feedback=document.getElementById('formFeedback');
+    const setDrawer=open=>{drawer.classList.toggle('open',open);backdrop.classList.toggle('open',open);document.body.style.overflow=open?'hidden':'';openMenu.setAttribute('aria-expanded',String(open))};
+    openMenu.addEventListener('click',()=>setDrawer(true));
+    closeMenu.addEventListener('click',()=>setDrawer(false));
+    backdrop.addEventListener('click',()=>setDrawer(false));
+    navItems.forEach(item=>item.addEventListener('click',()=>setDrawer(false)));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')setDrawer(false)});
+    const setActiveNav=()=>{let current='home';const offset=160;sections.forEach(section=>{if(window.scrollY>=section.offsetTop-offset)current=section.id});navItems.forEach(item=>item.classList.toggle('active',item.getAttribute('href')===`#${current}`))};
+    addEventListener('scroll',setActiveNav,{passive:true});
+    addEventListener('load',setActiveNav);
+    if('IntersectionObserver' in window){
+      const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in-view');observer.unobserve(entry.target)}})},{threshold:.18});
+      revealItems.forEach(item=>observer.observe(item));
+    }else{
+      revealItems.forEach(item=>item.classList.add('in-view'));
+    }
+    form.addEventListener('submit',e=>{
+      e.preventDefault();
+      const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim(),company=document.getElementById('company').value.trim(),farmType=document.getElementById('farmType').value;
+      if(!name||!email||!company||!farmType){
+        feedback.textContent='Please complete your name, email, organization, and operation type.';
+        feedback.style.color='#b45309';
+        return;
+      }
+      feedback.textContent=`Thanks, ${name}. We will reach out within one business day with a tailored consultation outline.`;
+      feedback.style.color='#1f6a4c';
+      form.reset();
+      setTimeout(()=>{feedback.textContent=''},5000);
+    });
+    document.getElementById('year').textContent=new Date().getFullYear();
+  </script>
+</body>
+</html>
